@@ -8,6 +8,8 @@ function App() {
 
   return (
     <>
+      <h1 className="bg-gray-600 h-screen">
+        Hello world!</h1>
       <h1>Vite + React</h1>
     </>
   );
