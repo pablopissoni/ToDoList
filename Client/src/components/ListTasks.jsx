@@ -17,6 +17,7 @@ export const ListTasks = ({ listTasks, getTasks }) => {
       console.log("Error al crear una nueva tarea (Front): ", error);
     }
   };
+  
 //* Borrar tarea ---
 const deleteTaskRequest = async (task_id) => {
   try {
