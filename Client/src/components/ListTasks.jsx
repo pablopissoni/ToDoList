@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { ToastContainer } from 'react-toastify'; //? Alert de React-toastify
+import { notifyError, notifyInfo, notifySuccess} from "./alertsToastify";
+
 
 export const ListTasks = ({ listTasks, getTasks }) => {
   const [newTask, setNewTask] = useState("");
@@ -14,19 +17,22 @@ export const ListTasks = ({ listTasks, getTasks }) => {
       getTasks()  //* Actualizar la lista de tareas
       setNewTask("")  //* Limpiar el input
     } catch (error) {
+
+      notifyError("La tarea ya existe!") //? Alerta si Ya esta repetido al intentar guardar
       console.log("Error al crear una nueva tarea (Front): ", error);
     }
   };
-  
+
 //* Borrar tarea ---
 const deleteTaskRequest = async (task_id) => {
   try {
     const response = await axios.delete(
       `http://localhost:3000/listtasks/${task_id}`
       );
+      notifyInfo("Tarea borrada!")  //? Alerta de tarea borrada
       console.log("Se borro la tarea :", response.data);
       getTasks()  //* Actualizar la lista de tareas
-      
+    
     } catch (error) {
       console.log("Error al borrar una tarea (Front): ", error);
     }
@@ -36,7 +42,7 @@ const deleteTaskRequest = async (task_id) => {
     try {
       const response = await axios.put(
         `http://localhost:3000/listtasks/${task_id}`);
-        
+      notifySuccess("Genial !!")
       getTasks()  //* Actualizar la lista de tareas
       
     } catch (error) {
@@ -50,6 +56,7 @@ const deleteTaskRequest = async (task_id) => {
     const { value } = e.target;
     setNewTask(value);
   }
+  
 
   //*------------------------------------
   return (
@@ -58,10 +65,11 @@ const deleteTaskRequest = async (task_id) => {
         LISTAS DE TAREAS
       </h2>
 
+      <ToastContainer />  {/*Alert de React-toastify*/}
       {/* ---------- NUEVA TAREA ---------- */}
       <div className="m-2">
         <input
-          class="appearance-none  w-3/4 bg-gray-100 text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+          className="appearance-none  w-3/4 bg-gray-100 text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
           value={newTask}
           type="text"
           onChange={handleChange}
