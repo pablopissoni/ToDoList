@@ -4,10 +4,24 @@ import { ToastContainer } from 'react-toastify'; //? Alert de React-toastify
 import { notifyError, notifyInfo, notifySuccess} from "./alertsToastify";
 
 
-export const ListTasks = ({ listTasks, getTasks }) => {
+export const ListTasks = () => {
   const [newTask, setNewTask] = useState("");
+  const [listTasks, setListTasks] = useState([]);
 
-  //*------ PETICIONES -------------
+  
+//*--------------------- PETICIONES ------------------------------
+//* GET lista de tareas ---
+const getTasks = async () => {
+  const response = await axios.get("http://localhost:3000/listtasks");
+  console.log("response.data:", response.data);
+  setListTasks(response.data);
+};
+
+  useEffect(() => {
+    getTasks();
+  }, []);
+  
+  //* POST Nueva tarea ---
   const newTaskRequest = async () => {
     try {
       const response = await axios.post("http://localhost:3000/listtasks", {
@@ -17,46 +31,46 @@ export const ListTasks = ({ listTasks, getTasks }) => {
       getTasks()  //* Actualizar la lista de tareas
       setNewTask("")  //* Limpiar el input
     } catch (error) {
-
+      
       notifyError("La tarea ya existe!") //? Alerta si Ya esta repetido al intentar guardar
       console.log("Error al crear una nueva tarea (Front): ", error);
     }
   };
-
-//* Borrar tarea ---
-const deleteTaskRequest = async (task_id) => {
-  try {
-    const response = await axios.delete(
-      `http://localhost:3000/listtasks/${task_id}`
-      );
-      notifyInfo("Tarea borrada!")  //? Alerta de tarea borrada
-      console.log("Se borro la tarea :", response.data);
-      getTasks()  //* Actualizar la lista de tareas
-    
-    } catch (error) {
-      console.log("Error al borrar una tarea (Front): ", error);
-    }
-  }
-  //* Completar tarea ---
-  const completeTaskRequest = async (task_id) => {
+  
+  //* Borrar tarea ---
+  const deleteTaskRequest = async (task_id) => {
     try {
-      const response = await axios.put(
-        `http://localhost:3000/listtasks/${task_id}`);
-      notifySuccess("Genial !!")
-      getTasks()  //* Actualizar la lista de tareas
-      
-    } catch (error) {
-      console.log("Error al completar una tarea (Front): ", error);
+      const response = await axios.delete(
+        `http://localhost:3000/listtasks/${task_id}`
+        );
+        notifyInfo("Tarea borrada!")  //? Alerta de tarea borrada
+        console.log("Se borro la tarea :", response.data);
+        getTasks()  //* Actualizar la lista de tareas
+        
+      } catch (error) {
+        console.log("Error al borrar una tarea (Front): ", error);
+      }
     }
-  }
-
+    //* Completar tarea ---
+    const completeTaskRequest = async (task_id) => {
+      try {
+        const response = await axios.put(
+          `http://localhost:3000/listtasks/${task_id}`);
+          notifySuccess("Genial !!")
+          getTasks()  //* Actualizar la lista de tareas
+          
+        } catch (error) {
+          console.log("Error al completar una tarea (Front): ", error);
+        }
+      }
+//*--------------------- PETICIONES ------------------------------
+    
   //*------ FUNCIONES -------------
-
+  
   const handleChange = (e) => {
     const { value } = e.target;
     setNewTask(value);
   }
-  
 
   //*------------------------------------
   return (
