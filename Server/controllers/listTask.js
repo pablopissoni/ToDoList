@@ -162,10 +162,38 @@ const deleteTask = async (req, res) => { //* DELETE Elimina una tarea
   }
 }
 
+const deleteAllTask = async (req, res) => { //* DELETE Elimina todas las tareas
+  try{
+    const deletedTasks = await Task.destroy({
+      where: {},
+    });
+
+    if (deletedTasks > 0) {
+      return res.status(200).json({
+        message: "Todas las tareas eliminadas",
+      });
+    } else {
+      return res.status(404).json({
+        message: "No se encontro tareas para eliminar",
+      });
+    }
+    
+  
+
+  } catch (error) {
+    console.error("Error al eliminar las tareas: ", error);
+    return res.status(500).json({
+      message: "Error al eliminar las tareas",
+    });
+  
+  } 
+}
+
 module.exports = {
   getTasks,
   newTask,
   switchChecked,
   changeChecked,
   deleteTask,
+  deleteAllTask
 };

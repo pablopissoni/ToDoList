@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ToastContainer } from 'react-toastify'; //? Alert de React-toastify
-import { notifyError, notifyInfo, notifySuccess} from "./alertsToastify";
-
+import { ToastContainer } from "react-toastify"; //? Alert de React-toastify
+import { notifyError, notifyInfo, notifySuccess } from "./alertsToastify";
 
 export const ListTasks = () => {
   const [newTask, setNewTask] = useState("");
   const [listTasks, setListTasks] = useState([]);
 
-  
-//*--------------------- PETICIONES ------------------------------
-//* GET lista de tareas ---
-const getTasks = async () => {
-  const response = await axios.get("http://localhost:3000/listtasks");
-  console.log("response.data:", response.data);
-  setListTasks(response.data);
-};
+  //*--------------------- PETICIONES ------------------------------
+  //* GET lista de tareas ---
+  const getTasks = async () => {
+    const response = await axios.get("http://localhost:3000/listtasks");
+    response.data.length
+      ? setListTasks(response.data)
+      : setListTasks([{ id: 1, title: "No hay tareas cargadas! 😁👍" }]);
+    console.log("response.data:", response.data);
+  };
 
   useEffect(() => {
     getTasks();
   }, []);
-  
+
   //* POST Nueva tarea ---
   const newTaskRequest = async () => {
     try {
@@ -28,49 +28,60 @@ const getTasks = async () => {
         title: newTask,
       });
       console.log("Se creo la tarea :", response.data);
-      getTasks()  //* Actualizar la lista de tareas
-      setNewTask("")  //* Limpiar el input
+      getTasks(); //* Actualizar la lista de tareas
+      setNewTask(""); //* Limpiar el input
     } catch (error) {
-      
-      notifyError("La tarea ya existe!") //? Alerta si Ya esta repetido al intentar guardar
+      notifyError("La tarea ya existe!"); //? Alerta si Ya esta repetido al intentar guardar
       console.log("Error al crear una nueva tarea (Front): ", error);
     }
   };
-  
+
   //* Borrar tarea ---
   const deleteTaskRequest = async (task_id) => {
     try {
       const response = await axios.delete(
         `http://localhost:3000/listtasks/${task_id}`
         );
-        notifyInfo("Tarea borrada!")  //? Alerta de tarea borrada
+        notifyInfo("Tarea borrada!"); //? Alerta de tarea borrada
         console.log("Se borro la tarea :", response.data);
-        getTasks()  //* Actualizar la lista de tareas
-        
+        getTasks(); //* Actualizar la lista de tareas
       } catch (error) {
         console.log("Error al borrar una tarea (Front): ", error);
       }
-    }
-    //* Completar tarea ---
-    const completeTaskRequest = async (task_id) => {
-      try {
-        const response = await axios.put(
-          `http://localhost:3000/listtasks/${task_id}`);
-          notifySuccess("Genial !!")
-          getTasks()  //* Actualizar la lista de tareas
-          
-        } catch (error) {
-          console.log("Error al completar una tarea (Front): ", error);
-        }
+    };
+  //* Borrar TODAS las tareas ---
+  const deleteAllTaskRequest = async () => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/listtasks/deleteAll`
+        );
+        notifyInfo("Todas las tareas borradas!"); //? Alerta de tareas borradas
+        console.log("Se borro todas las Tareas :", response.data);
+        getTasks(); //* Actualizar la lista de tareas
+      } catch (error) {
+        console.log("Error al borrar una tarea (Front): ", error);
       }
-//*--------------------- PETICIONES ------------------------------
-    
+  }
+  //* Completar tarea ---
+  const completeTaskRequest = async (task_id) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/listtasks/${task_id}`
+      );
+      notifySuccess("Genial !!");
+      getTasks(); //* Actualizar la lista de tareas
+    } catch (error) {
+      console.log("Error al completar una tarea (Front): ", error);
+    }
+  };
+  //*--------------------- PETICIONES ------------------------------
+
   //*------ FUNCIONES -------------
-  
+
   const handleChange = (e) => {
     const { value } = e.target;
     setNewTask(value);
-  }
+  };
 
   //*------------------------------------
   return (
@@ -78,12 +89,11 @@ const getTasks = async () => {
       <h2 className="text-xl font-semibold mb-4 text-center shadow-md rounded-lg bg-slate-400">
         LISTAS DE TAREAS
       </h2>
-
-      <ToastContainer />  {/*Alert de React-toastify*/}
+      <ToastContainer /> {/*Alert de React-toastify*/}
       {/* ---------- NUEVA TAREA ---------- */}
-      <div className="m-2">
+      <div className="m-2 flex items-center">
         <input
-          className="appearance-none  w-3/4 bg-gray-100 text-gray-700 border border-gray-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+          className="appearance-none h-10 w-3/4 bg-gray-100 text-gray-700 border border-gray-500 py-3 px-4 leading-tight focus:outline-none focus:bg-white rounded-l-lg"
           value={newTask}
           type="text"
           onChange={handleChange}
@@ -92,13 +102,18 @@ const getTasks = async () => {
         />
 
         <button
-          className="bg-blue-500 hover:bg-blue-600 text-white font-bold mx-4 py-2 px-4 rounded-lg "
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold  py-2 px-4 h-10 rounded-r-lg"
           onClick={newTaskRequest}
         >
-          Agregar
+          ➕
+        </button>
+        <button
+          className="bg-red-800 hover:bg-red-600 text-white font-bold ml-4 p-2 h-10 rounded-lg"
+          onClick={deleteAllTaskRequest}
+        >
+          🗑️
         </button>
       </div>
-
       <div className="overflow-x-auto  ">
         {/* <h3>{productsSlice.products.length}</h3> */}
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
@@ -117,20 +132,34 @@ const getTasks = async () => {
             {/* ---------- LISTA DE TAREAS ---------- */}
             {listTasks?.map((task, index) => (
               <tr
-                className= {`shadow-md rounded-lg my-2 bg-blue-200 dark:border-gray-700 `}
+                className={`shadow-md rounded-lg my-2 bg-blue-200 dark:border-gray-700 `}
                 key={task.id}
               >
-                <td className={`px-6 py-1 font-medium  text-gray-900 ${task.checked? "line-through text-inherit" : ""} `}>
+                <td
+                  className={`px-6 py-1 font-medium  text-gray-900 ${
+                    task?.checked ? "line-through text-inherit" : ""
+                  } `}
+                >
                   <div className="w-auto ">{task.title}</div>
                 </td>
 
                 <td className="px-1 py-1 font-medium text-gray-900 whitespace-nowrap ">
-                  <button onClick={() => completeTaskRequest(task.id)} className="pl-6">
-                    ✔️
-                  </button>
-                  <button onClick={() => deleteTaskRequest(task.id)} className="pl-6">
-                    ✖️
-                  </button>
+                  {task.id !== 1 && (
+                    <>
+                      <button
+                        onClick={() => completeTaskRequest(task.id)}
+                        className="pl-6"
+                      >
+                        ✔️
+                      </button>
+                      <button
+                        onClick={() => deleteTaskRequest(task.id)}
+                        className="pl-6"
+                      >
+                        ✖️
+                      </button>
+                    </>
+                  )}
                 </td>
               </tr>
             ))}
