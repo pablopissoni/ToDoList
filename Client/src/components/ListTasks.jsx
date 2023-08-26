@@ -24,12 +24,17 @@ export const ListTasks = () => {
   //* POST Nueva tarea ---
   const newTaskRequest = async () => {
     try {
+      if ( newTask ) {
       const response = await axios.post("http://localhost:3000/listtasks", {
         title: newTask,
       });
       console.log("Se creo la tarea :", response.data);
       getTasks(); //* Actualizar la lista de tareas
       setNewTask(""); //* Limpiar el input
+      } else {
+        notifyError("Ingrese una tarea!"); //? Alerta si No hay tarea
+      }
+      
     } catch (error) {
       notifyError("La tarea ya existe!"); //? Alerta si Ya esta repetido al intentar guardar
       console.log("Error al crear una nueva tarea (Front): ", error);
