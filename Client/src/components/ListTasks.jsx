@@ -24,17 +24,16 @@ export const ListTasks = () => {
   //* POST Nueva tarea ---
   const newTaskRequest = async () => {
     try {
-      if ( newTask ) {
-      const response = await axios.post("http://localhost:3000/listtasks", {
-        title: newTask,
-      });
-      console.log("Se creo la tarea :", response.data);
-      getTasks(); //* Actualizar la lista de tareas
-      setNewTask(""); //* Limpiar el input
+      if (newTask) {
+        const response = await axios.post("http://localhost:3000/listtasks", {
+          title: newTask,
+        });
+        console.log("Se creo la tarea :", response.data);
+        getTasks(); //* Actualizar la lista de tareas
+        setNewTask(""); //* Limpiar el input
       } else {
         notifyError("Ingrese una tarea!"); //? Alerta si No hay tarea
       }
-      
     } catch (error) {
       notifyError("La tarea ya existe!"); //? Alerta si Ya esta repetido al intentar guardar
       console.log("Error al crear una nueva tarea (Front): ", error);
@@ -46,27 +45,31 @@ export const ListTasks = () => {
     try {
       const response = await axios.delete(
         `http://localhost:3000/listtasks/${task_id}`
-        );
-        notifyInfo("Tarea borrada!"); //? Alerta de tarea borrada
-        console.log("Se borro la tarea :", response.data);
-        getTasks(); //* Actualizar la lista de tareas
-      } catch (error) {
-        console.log("Error al borrar una tarea (Front): ", error);
-      }
-    };
+      );
+      notifyInfo("Tarea borrada!"); //? Alerta de tarea borrada
+      console.log("Se borro la tarea :", response.data);
+      getTasks(); //* Actualizar la lista de tareas
+    } catch (error) {
+      console.log("Error al borrar una tarea (Front): ", error);
+    }
+  };
   //* Borrar TODAS las tareas ---
   const deleteAllTaskRequest = async () => {
     try {
-      const response = await axios.delete(
-        `http://localhost:3000/listtasks/deleteAll`
+      if (listTasks[0].id === 1) {
+        notifyError("No hay tareas para eliminar!"); //? Alerta si No hay tarea
+      } else {
+        const response = await axios.delete(
+          `http://localhost:3000/listtasks/deleteAll`
         );
         notifyInfo("Todas las tareas borradas!"); //? Alerta de tareas borradas
         console.log("Se borro todas las Tareas :", response.data);
         getTasks(); //* Actualizar la lista de tareas
-      } catch (error) {
-        console.log("Error al borrar una tarea (Front): ", error);
       }
-  }
+    } catch (error) {
+      console.log("Error al borrar una tarea (Front): ", error);
+    }
+  };
   //* Completar tarea ---
   const completeTaskRequest = async (task_id) => {
     try {
