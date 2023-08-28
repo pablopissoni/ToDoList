@@ -93,16 +93,15 @@ export const ListTasks = () => {
 
   //*------------------------------------
   return (
-    <div className="w-[550px] ml-10 mt-10 p-2 bg-white shadow-md">
+    <div className="w-1/3 ml-10 mt-10 p-2 bg-white shadow-md">
       <h2 className="text-xl font-semibold mb-4 text-center shadow-md rounded-lg bg-slate-400">
         LISTAS DE TAREAS
       </h2>
       <ToastContainer /> {/*Alert de React-toastify*/}
-
       {/* ---------- NUEVA TAREA ---------- */}
       <div className="m-2 flex items-center">
         <input
-          className="appearance-none h-8 w-3/4 bg-gray-100 text-gray-700 border border-gray-500 py-3 px-4 leading-tight focus:outline-none focus:bg-white rounded-l-lg"
+          className="appearance-none h-10 w-3/4 bg-gray-100 text-gray-700 border border-gray-500 py-3 px-4 leading-tight focus:outline-none focus:bg-white rounded-l-lg"
           value={newTask}
           type="text"
           onChange={handleChange}
@@ -111,71 +110,70 @@ export const ListTasks = () => {
         />
 
         <button
-          className="bg-blue-500 hover:bg-blue-400 text-white font-bold px-4 h-8 rounded-r-lg hover:scale-110"
+          className="bg-blue-500 hover:bg-blue-600 text-white font-bold  py-2 px-4 h-10 rounded-r-lg"
           onClick={newTaskRequest}
         >
           ➕
         </button>
         <button
-          className="bg-red-800 hover:bg-red-600 text-white font-bold ml-4 px-1 h-8 rounded-lg hover:scale-125"
+          className="bg-red-800 hover:bg-red-600 text-white font-bold ml-4 p-2 h-10 rounded-lg"
           onClick={deleteAllTaskRequest}
         >
           🗑️
         </button>
       </div>
-
-        {/* Titulo de Tareas */}
-      {/* <div className="overflow-x-auto  "> */}
-        <div className="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
-
-          <div className="text-sm font-bold text-gray-700 uppercase rounded-lg flex bg-slate-200">
-              <p scope="col" className="ml-8 px-4 py-3 flex-1">
+      <div className="overflow-x-auto  ">
+        {/* <h3>{productsSlice.products.length}</h3> */}
+        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
+          <thead className="text-xs  text-gray-700 uppercase rounded-lg  bg-slate-200">
+            <tr>
+              <th scope="col" className="px-4 py-3">
                 TAREAS
-              </p>
+              </th>
 
-              <p scope="col" className=" px-6 py-3 ">
+              <th scope="col" className="w-1/4 px-6 py-3">
                 Acciones
-              </p>
-          </div>
-
-          <div className="">
-          {listTasks?.map((task, index) => (
-            <ul
-              className={`hover:shadow-md hover:bg-blue-300 rounded-lg my-2 bg-blue-200 dark:border-gray-700 flex`}
-              key={task.id}
-            >
-              <li
-                className={`px-6 py-1 font-medium text-gray-900 ${
-                  task?.checked ? "line-through text-inherit" : ""
-                } `}
+              </th>
+            </tr>
+          </thead>
+          <tbody className="">
+            {/* ---------- LISTA DE TAREAS ---------- */}
+            {listTasks?.map((task, index) => (
+              <tr
+                className={`shadow-md rounded-lg my-2 bg-blue-200 dark:border-gray-700 `}
+                key={task.id}
               >
-                <div className="w-auto ">{task.title}</div>
-              </li>
+                <td
+                  className={`px-6 py-1 font-medium  text-gray-900 ${
+                    task?.checked ? "line-through text-inherit" : ""
+                  } `}
+                >
+                  <div className="w-auto ">{task.title}</div>
+                </td>
 
-              <li className="px-6 py-1 font-medium text-gray-900 whitespace-nowrap ml-auto flex items-center">
-                {task.id !== 1 && (
-                  <>
-                    <button
-                    className="mx-4 hover:scale-125"
-                    onClick={() => completeTaskRequest(task.id)}
-                    >
-                      ✔️
-                    </button>
-                    <button
-                      className="hover:scale-125"
-                      onClick={() => deleteTaskRequest(task.id)}
-                    >
-                      ✖️
-                    </button>
-                  </>
-                )}
-              </li>
-            </ul>
-          ))}
-        </div>
-
-        </div>
-      {/* </div> */}
+                <td className="px-1 py-1 font-medium text-gray-900 whitespace-nowrap ">
+                  {task.id !== 1 && (
+                    <>
+                      <button
+                        onClick={() => completeTaskRequest(task.id)}
+                        className="pl-6"
+                      >
+                        ✔️
+                      </button>
+                      <button
+                        onClick={() => deleteTaskRequest(task.id)}
+                        className="pl-6"
+                      >
+                        ✖️
+                      </button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
